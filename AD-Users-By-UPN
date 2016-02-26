@@ -1,0 +1,21 @@
+# 
+# Author:  Chris Didato
+# Version: 1.1
+# If you have been looking for a way to create users based on their Email Address (For Uniqueness) and are using UPN and Local Domains, Here it is. 
+# Hope it Helps.. 
+
+
+
+# From CSV File, Create users with UPN as Login ID (Assumes you have UPN as Default), Add Uses EMail Address and Use EMail Suffix as SAMAccountName.
+# Add users to Desired Groups.    
+# CSV Fromat is:
+# Name,GivenName,Surname,EmailAddress,UserPrincipalName
+Import-Csv c:\se-users.csv | foreach-object {
+
+New-ADUser -SamAccountName $_.Name -UserPrincipalName $_.UserPrincipalName -Name $_.Name -EmailAddress $_.EmailAddress -GivenName $_.GivenName -Surname $_.Surname -Path "CN=Users,DC=corp,DC=YourCompany,DC=com" -AccountPassword (ConvertTo-SecureString "SomeComp1exPASSW)RD!" -AsPlainText -force) -ChangePasswordAtLogon $true  -Enabled $True -PassThru
+
+add-adgroupmember "Group2" -member $_.Name
+add-adgroupmember "Group3" -member $_.Name 
+add-adgroupmember "Group4" -member $_.Name
+add-adgroupmember "Group5" -member $_.Name
+}
